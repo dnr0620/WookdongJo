@@ -34,10 +34,10 @@ public class PlayerMove : MonoBehaviour
         }
 
         // Stop Speed
-        if (Input.GetButtonUp("Horizontal"))
-        {
-            rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.5f, rigid.velocity.normalized.y);
-        }
+        //if (Input.GetButtonUp("Horizontal"))
+       // {
+       //     rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.5f, rigid.velocity.normalized.y);
+      //  }
         
         // Direction Sprite
         if (Input.GetButton("Horizontal"))
