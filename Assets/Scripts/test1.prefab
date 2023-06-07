@@ -126,4 +126,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   destroyDelay: 2
   respawnDelay: 2
-  platformPrefab: {fileID: 0}
+  platformPrefab: {fileID: 2967980682998569224}

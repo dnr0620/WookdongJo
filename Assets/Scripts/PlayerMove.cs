@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMove : MonoBehaviour
 {
@@ -51,7 +52,10 @@ public class PlayerMove : MonoBehaviour
         // this.animator.speed = speedx / 2.0f;
         Movement();
 
-
+        if (transform.position.y < -5)
+        {
+            SceneManager.LoadScene("GameScene1");
+        }
     }
 
     public void FixedUpdate()
