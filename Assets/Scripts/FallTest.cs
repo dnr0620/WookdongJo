@@ -5,7 +5,7 @@ using UnityEngine;
 public class FallTest : MonoBehaviour
 {
     public float destroyDelay = 2f;     // 발판이 파괴되는 지연 시간
-    public float respawnDelay = 2f;     // 파괴된 발판이 재생성되는 지연 시간
+    public float respawnDelay = 5f;     // 파괴된 발판이 재생성되는 지연 시간
     public GameObject platformPrefab;   // 재생성될 발판의 프리팹
 
     private bool isDestroyed = false;   // 발판이 파괴되었는지 여부
@@ -25,24 +25,19 @@ public class FallTest : MonoBehaviour
         {
             isDestroyed = true;
             destroyTime = Time.time;
-            Destroy(gameObject, destroyDelay);  // 일정 시간 후 발판 파괴
+            Invoke("DestroyPlatform", destroyDelay);  // 일정 시간 후 발판 파괴
         }
     }
 
-    private void Update()
+    private void DestroyPlatform()
     {
-        if (isDestroyed && Time.time >= destroyTime + respawnDelay)
-        {
-            isDestroyed = false;
-            GameObject newPlatform = Instantiate(platformPrefab, initialPosition, initialRotation);  // 발판 재생성
-            newPlatform.GetComponent<FallTest>().Initialize(respawnDelay);  // 발판 컨트롤러 초기화
-        }
+        gameObject.SetActive(false);  // 발판 비활성화
+        Invoke("RespawnPlatform", respawnDelay);  // 일정 시간 후 발판 재생성
     }
 
-    public void Initialize(float delay)
+    private void RespawnPlatform()
     {
-        isDestroyed = false;
-        destroyTime = 0f;
-        respawnDelay = delay;
+        gameObject.SetActive(true);  // 발판 활성화
+        isDestroyed = false;  // 발판 상태 재설정
     }
 }
