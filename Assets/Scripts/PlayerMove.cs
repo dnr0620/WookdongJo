@@ -103,14 +103,17 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    void OnDamaged(Vector2 targetPos)
+ 
+
+
+
+
+    public void OnDamaged(Vector2 targetPos)
     {
 
         // Health Down
         gameManager.HealthDown();
 
-        // Change Layer - PlayerDamaged (Immortal Active)
-        gameObject.layer = 11;
 
         // View Alpha
         spriteRenderer.color = new Color(1, 1, 1, 1f);
@@ -119,39 +122,13 @@ public class PlayerMove : MonoBehaviour
         int dirc = transform.position.x - targetPos.x > 0 ? 1 : -1;
         rigid.AddForce(new Vector2(dirc, 1) * 10, ForceMode2D.Impulse);
 
-       
-
-        
-
-        // 모든 키 비활성화
-        inputEnabled = false;
-
         // Animation
         anim.SetTrigger("doDamaged");
 
-        // 3초 후 OnDie함수 호출
-        Invoke("OnDie", 3);
-
-
+        // OnDie함수 호출
+        Invoke("OnDie", 0.01f);
     }
 
-    void OffDamaged()
-    {
-        // Player의 태그 Player로 변경
-        gameObject.layer = 10;
-
-        // 투명도 
-        spriteRenderer.color = new Color(1, 1, 1, 1);
-
-        // 부활 좌표
-        transform.position = new Vector3(1, 0, 0);
-
-        // 모든 키 활성화
-        inputEnabled = true;
-
-    }
-
-  
 
 
     void Movement()
@@ -175,8 +152,11 @@ public class PlayerMove : MonoBehaviour
 
     public void OnDie()
     {
+        // Change Layer - PlayerDamaged (Immortal Active)
+        gameObject.layer = 11;
 
-
+        // 모든 키 비활성화
+        inputEnabled = false;
 
         // Sprite Alpha
         // spriteRenderer.color = new Color(1, 1, 1, 0.4f);
@@ -191,16 +171,27 @@ public class PlayerMove : MonoBehaviour
         // Die Effect Jump
         rigid.AddForce(Vector2.up * 1, ForceMode2D.Impulse);
 
-        Invoke("OffDamaged",0.2f);
-
-        
+        Invoke("OffDamaged",3);
 
 
+    }
+
+    void OffDamaged()
+    {
+        // Player의 태그 Player로 변경
+        gameObject.layer = 10;
+
+        // 투명도 
+        spriteRenderer.color = new Color(1, 1, 1, 1);
+
+        // 부활 좌표
+        transform.position = new Vector3(1, 0, 0);
+
+        // 모든 키 활성화
+        inputEnabled = true;
 
     }
 
 
 
-  
- 
 }

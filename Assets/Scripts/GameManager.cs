@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    public PlayerMove playerMove;
     public int totalPoint;
     public int stagePoint;
     public int stageIndex;
@@ -29,13 +30,13 @@ public class GameManager : MonoBehaviour
     public void HealthDown()
     {
         /*if (health > 0)
-        {
-            health--;*/
+        {*/
+            //health--;
             deadCount++;
             // Result UI
-            Debug.Log("죽었습니다! 3초 후 부활합니다!");
+           /* Debug.Log("죽었습니다! 3초 후 부활합니다!");
             Debug.Log("현재까지 "+deadCount+"번 죽었습니다!");
-
+*/
 
             //UIhealth[health].color = new Color(1, 1, 1, 0.2);
 
@@ -51,21 +52,23 @@ public class GameManager : MonoBehaviour
                  // Retry Button UI
                  // UIRestartBtn.SetActive(true);*/
 
-        // }
+        
     }
 
-    void OnTriggerEnter2D(Collider2D collision)
+ /*   void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Player")
         {
-            // Health Down
-            HealthDown();
+           // playerMove = collision.GetComponent<PlayerMove>();
 
-        collision.attachedRigidbody.velocity = Vector2.zero;
-        collision.transform.position = new Vector3(0, 0, -1);
+            // 낙사 시 사망 처리
+            playerMove.OnDie();
+
+        *//*collision.attachedRigidbody.velocity = Vector2.zero;
+        collision.transform.position = new Vector3(0, 0, -1);*//*
 
         }
-    }
+    }*/
 
     // Update is called once per frame
     void Update()
