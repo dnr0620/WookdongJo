@@ -10,6 +10,9 @@ public class PlayerMove : MonoBehaviour
     public float speed; // 게임 적용 속도
     public float moveX; // 달릴때 x좌표 움직임 적용
 
+    public bool inputEnabled = true;
+
+
 
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
@@ -26,38 +29,42 @@ public class PlayerMove : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        // Jump
-        if (Input.GetButtonDown("Jump") && !anim.GetBool("IsJumping"))
+        if (inputEnabled)
         {
-            rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
-            anim.SetBool("IsJumping", true);
+            // Input handling code goes here
+            // Jump
+            if (Input.GetButtonDown("Jump") && !anim.GetBool("IsJumping"))
+            {
+                rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+                anim.SetBool("IsJumping", true);
+            }
+
+            // Stop Speed
+            //if (Input.GetButtonUp("Horizontal"))
+            // {
+            //     rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.5f, rigid.velocity.normalized.y);
+            //  }
+
+            // Direction Sprite
+            if (Input.GetButton("Horizontal"))
+                spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
+
+            // Animation 
+            if (Mathf.Abs(rigid.velocity.x) < 0.3)
+                anim.SetBool("IsWalking", false);
+            else
+                anim.SetBool("IsWalking", true);
+            // this.animator.speed = speedx / 2.0f;
+            Movement();
         }
-
-        // Stop Speed
-        //if (Input.GetButtonUp("Horizontal"))
-       // {
-       //     rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.5f, rigid.velocity.normalized.y);
-      //  }
-        
-        // Direction Sprite
-        if (Input.GetButton("Horizontal"))
-            spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
-
-        // Animation 
-        if (Mathf.Abs(rigid.velocity.x) < 0.3)
-            anim.SetBool("IsWalking", false);
-        else
-            anim.SetBool("IsWalking", true);
-        // this.animator.speed = speedx / 2.0f;
-        Movement();
-
 
     }
 
     public void FixedUpdate()
     {
-        // Move Speed
-        float h = Input.GetAxisRaw("Horizontal");
+        if (inputEnabled) { 
+            // Move Speed
+            float h = Input.GetAxisRaw("Horizontal");
 
         rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
 
@@ -80,7 +87,7 @@ public class PlayerMove : MonoBehaviour
                     anim.SetBool("IsJumping", false);
             }
         }
-
+        }
 
     }
 
@@ -88,7 +95,10 @@ public class PlayerMove : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")
         {
-            if (collision.gameObject.tag == "Enemy")
+            // Attack
+            if (rigid.velocity.y < 0 && transform.position.y > collision.transform.position.y)
+                OnDamaged(collision.transform.position);
+            else // Damaged
                 OnDamaged(collision.transform.position);
         }
     }
@@ -99,7 +109,7 @@ public class PlayerMove : MonoBehaviour
         // Health Down
         gameManager.HealthDown();
 
-        // Change Layer (Immortal Active)
+        // Change Layer - PlayerDamaged (Immortal Active)
         gameObject.layer = 11;
 
         // View Alpha
@@ -107,15 +117,42 @@ public class PlayerMove : MonoBehaviour
 
         // Reaction Force
         int dirc = transform.position.x - targetPos.x > 0 ? 1 : -1;
-        rigid.AddForce(new Vector2(dirc, 1) * 20, ForceMode2D.Impulse);
+        rigid.AddForce(new Vector2(dirc, 1) * 10, ForceMode2D.Impulse);
+
+       
+
+        
+
+        // 모든 키 비활성화
+        inputEnabled = false;
 
         // Animation
         anim.SetTrigger("doDamaged");
 
-        //Invoke("OffDamaged", 3);
+        // 3초 후 OnDie함수 호출
+        Invoke("OnDie", 3);
 
 
     }
+
+    void OffDamaged()
+    {
+        // Player의 태그 Player로 변경
+        gameObject.layer = 10;
+
+        // 투명도 
+        spriteRenderer.color = new Color(1, 1, 1, 1);
+
+        // 부활 좌표
+        transform.position = new Vector3(1, 0, 0);
+
+        // 모든 키 활성화
+        inputEnabled = true;
+
+    }
+
+  
+
 
     void Movement()
     {
@@ -138,16 +175,32 @@ public class PlayerMove : MonoBehaviour
 
     public void OnDie()
     {
-        // Sprite Alpha
-        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
-        // Sprite Flip Y
-        spriteRenderer.flipY = true;
-        // Collider.Disable
-        //BoxCollider.enabled = false;
-        // Die Effect Jump
-        //rigid.AddForce(Vector2.UP * 5, ForceMode2D.Impulse);
 
-        gameObject.SetActive(false);
+
+
+        // Sprite Alpha
+        // spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+
+        // Sprite Flip Y
+        //spriteRenderer.flipY = true;
+
+
+        // Collider.Disable
+        // BoxCollider2D.enabled = false;
+
+        // Die Effect Jump
+        rigid.AddForce(Vector2.up * 1, ForceMode2D.Impulse);
+
+        Invoke("OffDamaged",0.2f);
+
+        
+
+
 
     }
+
+
+
+  
+ 
 }
